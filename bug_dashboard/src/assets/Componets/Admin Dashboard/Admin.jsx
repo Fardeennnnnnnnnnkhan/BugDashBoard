@@ -33,14 +33,16 @@ export default function Admin() {
   };
   
 
-  const approveUser = async (userId) => {
+  const approveUser = async (pendingUserId) => {
     try {
-      await axios.post(`${API_BASE_URL}/auth/approve-user`, { userId });
-      setPendingUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+        await axios.post(`${API_BASE_URL}/auth/approve-user`, { pendingUserId });
+        setPendingUsers((prevUsers) => prevUsers.filter((user) => user._id !== pendingUserId));
+        console.log("User approved successfully!");
     } catch (error) {
-      console.error("Error approving user", error);
+        console.error("Error approving user:", error.response?.data || error.message);
     }
-  };
+};
+
 
   const rejectUser = async (userId) => {
     try {
