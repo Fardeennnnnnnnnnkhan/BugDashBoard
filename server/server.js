@@ -16,7 +16,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/auth', userRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/",(req,res)=>{
+    console.log("Connected to backend...")
+}); 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

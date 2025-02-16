@@ -142,9 +142,21 @@ const Login = ({ setUserRole }) => {
         type="submit"
         className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 transition duration-300"
       >
-        Sign in
+        Register/Sign in
       </button>
+      <div className="flex justify-center text-white text-lg p-5">
+      <p>
+        Go to{" "}
+        <span
+          onClick={() => navigate("/signin")}
+          className="underline cursor-pointer text-blue-400 hover:text-blue-300"
+        >
+          Login
+        </span>
+      </p>
+    </div>
     </form>
+    
   </div>
 </div>
 

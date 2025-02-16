@@ -2,46 +2,58 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
-const {authenticate} = require("../middleware/auth"); // Middleware for authentication
-
+const {authenticate } = require("../middleware/auth"); // Middleware for authentication
+const {loginAdmin,createAdmin} = require("../controllers/adminController")
 const router = express.Router();
 
 // ✅ Admin Login Route
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
 
-    try {
-        const admin = await Admin.findOne({ email });
-        if (!admin) return res.status(404).json({ message: "Admin not found" });
+// router.post("/login",)
 
-        const isMatch = await bcrypt.compare(password, admin.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+router.post("/login",loginAdmin);
 
-        const token = jwt.sign({ id: admin._id, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+// router.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
 
-        res.status(200).json({ token, admin: { email: admin.email, role: "admin" } });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+//     try {
+//         const admin = await Admin.findOne({ email });
+        
+//         if (!admin) return res.status(404).json({ message: "Admin not found" });
+
+//         const pass = bcrypt.hash(password, 10)
+//         console.log(pass)
+//         console.log(admin.password)
+//         const isMatch = await bcrypt.compare(password, admin.password);
+        
+//         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+//         const token = jwt.sign({ id: admin._id, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+//         res.status(200).json({ token, admin: { email: admin.email, role: "admin" } });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// });
 
 // ✅ Create Admin (Restricted to Authenticated Admins)
-router.post("/create-admin", authenticate, async (req, res) => {
-    const { email, password } = req.body;
 
-    try {
-        const existingAdmin = await Admin.findOne({ email });
-        if (existingAdmin) return res.status(400).json({ message: "Admin already exists" });
+router.post("/create-admin", authenticate , createAdmin);
+// router.post("/create-admin", authenticate, async (req, res) => {
+//     const { email, password } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash password before saving
-        const newAdmin = new Admin({ email, password: hashedPassword });
+//     try {
+//         const existingAdmin = await Admin.findOne({ email });
+//         if (existingAdmin) return res.status(400).json({ message: "Admin already exists" });
 
-        await newAdmin.save();
+//         const hashedPassword = await bcrypt.hash(password, 10); // Hash password before saving
+//         const newAdmin = new Admin({ email, password: hashedPassword });
 
-        res.status(201).json({ message: "Admin created successfully" });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+//         await newAdmin.save();
+
+//         res.status(201).json({ message: "Admin created successfully" });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// });
 
 module.exports = router;
