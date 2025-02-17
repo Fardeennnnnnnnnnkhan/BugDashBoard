@@ -34,7 +34,7 @@ const Signin = ({ setUserRole }) => {
     try {
       let response;
         response = await axios.post(`${API_BASE_URL}/auth/login`, { username ,  email, password, role });
-      
+    //   consol
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userRole", role);
       setUserRole(role);
@@ -80,33 +80,7 @@ const Signin = ({ setUserRole }) => {
 
     {/* Form */}
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Username */}
-      {/* <div>
-        <label className="block font-medium dark:text-white">Username</label>
-        <input
-          type="text"
-          placeholder="Enter username"
-          value={username}
-          onChange={(e) => setusername(e.target.value)}
-          required
-          className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-gray-500 focus:outline-none"
-        />
-      </div> */}
-
-      {/* Role Selection */}
-      {/* <div>
-        <label className="block font-medium dark:text-white">Role</label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-gray-500 focus:outline-none"
-        >
-          <option value="admin">Admin</option>
-          <option value="coach">Coach</option>
-          <option value="hunter">Hunter</option>
-        </select>
-      </div> */}
-
+    
       {/* Email */}
       <div>
         <label className="block font-medium dark:text-white">Email</label>
