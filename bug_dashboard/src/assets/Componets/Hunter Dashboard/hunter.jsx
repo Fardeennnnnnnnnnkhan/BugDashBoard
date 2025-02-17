@@ -6,7 +6,8 @@ export default function Hunter() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-
+  const [status, setStatus] = useState("All");
+  const [industry, setIndustry] = useState("All");
   const toggleDarkMode = () => {
     setIsDarkMode((prevMode) => !prevMode);
   };
@@ -19,25 +20,15 @@ export default function Hunter() {
   const handleToolClick = (taskId) => {
     navigate(`/tool/${taskId}`);
   };
-
-  const projects = [
-    {
-      taskId: "TASK-001",
-      projectName: "Project Alpha",
-      industry: "Technology",
-      toolLink: "#",
-      status: "In Progress",
-      lastUpdated: "2024-02-09",
-      updatedBy: "John Doe",
-    },
-    // Add more tasks here...
+  const [project ,setProject] = useState([]);
+  const Status = [
+    "Pending" , "Complete" ,"In Process"
   ];
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [IndustryArray,setIndustryArray] = useState([]);
   useEffect(() => {
-    // console.log("swapnil want")
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -46,27 +37,89 @@ export default function Hunter() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token, // Sending token in the headers
+            Authorization: token, 
           },
         });
-        console.log(response);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch tasks");
         }
         const data = await response.json();
+        
         setTasks(data);
+        setProject(data);
+
+        const array = data.map((task)=>task.industry);
+        setIndustryArray(array);
+
       } catch (error) {
-        console.log(error);
         alert("Unable to fetch tasks", error);
-        setTasks([]); // Keep tasks empty on error
+        setTasks([]); 
       } finally {
         setLoading(false);
       }
     };
-
     fetchTasks();
+    // console.log(project)
   }, []);
 
+  useEffect(() => {
+
+        const filtered = tasks.filter((task) => {
+          var count =0;
+          if(task.industry === industry || industry=='All')count+=1  ;
+          if(task.status === status || status=='All')count+=1  ;
+          if(task.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            task.projectName.toLowerCase().includes(searchQuery.toLowerCase())  )count+=1;
+          if(count==3)return true;
+        });
+        setProject(filtered);
+        
+
+  }, [searchQuery, status, industry]); 
+
+  const handleStatusChange = async (newStatus, taskId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/task/update-status/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization" : localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ status: newStatus,updatedBy:localStorage.getItem("userName") }),
+      });
+      if (!response.ok) throw new Error("Failed to update status");
+  
+      const data = await response.json(); 
+  
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.taskId === taskId ? data.updatedTask : task))
+      );
+  
+      alert("Status updated successfully!");
+    } catch (error) {
+      alert("Error updating status");
+    }
+  };
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
+
+  useEffect(() => {
+    // Run the filter only if both dates are selected
+    if (startDate && endDate) {
+      const filtered = tasks.filter((task) => {
+        const taskDate = new Date(task.lastUpdated).toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+        return taskDate >= startDate && taskDate <= endDate;
+      });
+
+      setProject(filtered);
+    } else {
+      setProject(tasks); // Show all tasks if no filter is applied
+    }
+  }, [startDate, endDate]); 
+  
   // if(loading) return <p>Loading task ...</p>;
   return (
     <div
@@ -101,45 +154,65 @@ export default function Hunter() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto py-6 px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          {/* Search Bar */}
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <input
-              type="text"
-              placeholder="Search by Project Name, Task ID, or keywords..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <input
+            type="text"
+            placeholder="Search by Project Name, Task ID, or keywords..."
+            className="w-full pl-10 pr-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <select className="border p-2 rounded dark:bg-gray-700 dark:text-white">
-              <option>Select Industry</option>
-            </select>
-            <select className="border p-2 rounded dark:bg-gray-700 dark:text-white">
-              <option>Status</option>
-            </select>
-          </div>
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <select
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="All">All Status</option>
+            {["Pending", "In Progress", "Completed"].map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+
+          <select
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white"
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+          >
+            <option value="All">Select Industry</option>
+            { IndustryArray.map((i) => (
+              <option key={i} value={i}>{i}</option>
+            ))}
+          </select>
+        </div>
 
           {/* Date Filters */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <input
-              type="date"
-              className="border p-2 rounded dark:bg-gray-700 dark:text-white"
-            />
-            <input
-              type="date"
-              className="border p-2 rounded dark:bg-gray-700 dark:text-white"
-            />
-          </div>
+        <input
+          type="date"
+          className="border p-2 rounded dark:bg-gray-700 dark:text-white"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <input
+          type="date"
+          className="border p-2 rounded dark:bg-gray-700 dark:text-white"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+          <div className="overflow-x-auto ">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 ">
+              <thead className="bg-gray-50 dark:bg-gray-800 ">
                 <tr>
                   {[
                     "Task ID",
@@ -159,8 +232,8 @@ export default function Hunter() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800">
-                {tasks.map((project) => (
+              <tbody className="bg-white dark:bg-gray-800 ">
+                {project.map((project) => (
                   <tr
                     key={project.taskId}
                     className="border-b dark:border-gray-700"
@@ -171,15 +244,20 @@ export default function Hunter() {
                     <td className="px-6 py-4 text-sm">
                       <button
                         onClick={() => handleToolClick(project.taskId)}
-                        className="text-blue-500 hover:underline cursor-pointer"
-                      >
+                        className="text-blue-500 hover:underline cursor-pointer">
                         View Link
                       </button>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <span className="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-medium rounded-full">
-                        {project.status}
-                      </span>
+                      <select
+                        className="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-medium rounded-full"
+                        value={project.status}
+                        onChange={(e) => handleStatusChange(e.target.value, project.taskId)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
                     </td>
                     <td className="px-6 py-4 text-sm">{project.lastUpdated}</td>
                     <td className="px-6 py-4 text-sm">{project.updatedBy}</td>

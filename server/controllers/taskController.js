@@ -20,7 +20,6 @@ exports.createTask = async (req, res) => {
 // ✅ Get all tasks
 exports.getAllTasks = async (req, res) => {
     try {
-        console.log("swapnil")
         const tasks = await Task.find();
         res.status(200).json(tasks);
     } catch (error) {
@@ -61,20 +60,19 @@ exports.updateTaskStatus = async (req, res) => {
         const { taskId } = req.params;
 
         // Validate status value
-        const allowedStatuses = ["Pending", "In Progress", "Completed"];
-        if (!allowedStatuses.includes(status)) {
-            return res.status(400).json({ message: "Invalid status value" });
-        }
+            const allowedStatuses = ["Pending", "In Progress", "Completed"];
+            if (!allowedStatuses.includes(status)) {
+                return res.status(400).json({ message: "Invalid status value" });
+            }
 
-        // Update the status and timestamp
         const updatedTask = await Task.findOneAndUpdate(
             { taskId },
             { status, updatedBy, lastUpdated: Date.now() },
             { new: true }
         );
-
+        // console.log(updatedTask);
         if (!updatedTask) {
-            return res.status(404).json({ message: "Task not found" });
+            return res.status(404).json({ message: updateTask });
         }
 
         res.status(200).json({ message: "Task status updated successfully", updatedTask });

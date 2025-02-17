@@ -33,10 +33,11 @@ const Signin = ({ setUserRole }) => {
 
     try {
       let response;
-        response = await axios.post(`${API_BASE_URL}/auth/login`, { username ,  email, password, role });
+        response = await axios.post(`${API_BASE_URL}/auth/login`, {  email, password });
     //   consol
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userRole", role);
+      localStorage.setItem("userName", response.data.user.username);
       setUserRole(role);
       console.log(response.data.user.role)
       if (response.data.user.role === "hunter") {
