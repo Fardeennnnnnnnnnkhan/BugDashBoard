@@ -5,7 +5,7 @@ const taskSchema = new mongoose.Schema({
     projectName: { type: String, required: true },          // Project Name
     industry: { type: String, required: true },             // Industry Type
     toolLink: { type: String, required: false },            // Optional Tool Link
-    status: { type: String, required: true, enum: ["Pending", "In Progress", "Completed"] }, // Status Enum
+    status: { type: String, required: true, enum: ["Unclaimed", "In Progress", "Completed","Reviewed"] }, // Status Enum
     lastUpdated: { type: Date, default: Date.now },         // Auto-updated timestamp
     updatedBy: { type: String, required: true }             // User who updated it
 });
