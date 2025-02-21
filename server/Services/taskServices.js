@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const TaskChangeHistory = require("../models/TaskChangeHistory");
 
 // ✅ Create Task
 exports.createTask = async (taskData) => {
@@ -29,8 +30,13 @@ exports.updateTaskStatus = async (taskId, status, updatedBy) => {
     if (!allowedStatuses.includes(status)) throw new Error("Invalid status value");
 
     return await Task.findOneAndUpdate(
-        { taskId },
+        { _id:taskId },
         { status, updatedBy, lastUpdated: Date.now() },
         { new: true }
     );
 };
+
+exports.addTaskChange = async ( taskId, status, updatedBy ) => {
+    const taskChange = new TaskChangeHistory({taskChangeId:taskId, statusChangeTo:status, updatedBy: updatedBy , lastUpdated: Date.now()})
+    return await taskChange.save();
+}

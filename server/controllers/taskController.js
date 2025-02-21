@@ -1,6 +1,5 @@
 const taskService = require("../Services/taskServices");
 
-// ✅ Create a new task
 exports.createTask = async (req, res) => {
     try {
         const task = await taskService.createTask(req.body);
@@ -10,7 +9,6 @@ exports.createTask = async (req, res) => {
     }
 };
 
-// ✅ Get all tasks
 exports.getAllTasks = async (req, res) => {
     try {
         const tasks = await taskService.getAllTasks();
@@ -20,7 +18,6 @@ exports.getAllTasks = async (req, res) => {
     }
 };
 
-// ✅ Update a task
 exports.updateTask = async (req, res) => {
     try {
         const updatedTask = await taskService.updateTask(req.params.taskId, req.body);
@@ -31,7 +28,6 @@ exports.updateTask = async (req, res) => {
     }
 };
 
-// ✅ Delete a task
 exports.deleteTask = async (req, res) => {
     try {
         const deletedTask = await taskService.deleteTask(req.params.taskId);
@@ -41,18 +37,20 @@ exports.deleteTask = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// ✅ Update Task Status
+    
 exports.updateTaskStatus = async (req, res) => {
     try {
         const { status, updatedBy } = req.body;
         const { taskId } = req.params;
+        // console.log("swaponil here");
 
         const updatedTask = await taskService.updateTaskStatus(taskId, status, updatedBy);
+        const updatedTaskChange = await taskService.addTaskChange(taskId, status, updatedBy);
         if (!updatedTask) return res.status(404).json({ message: "Task not found" });
 
         res.status(200).json({ message: "Task status updated successfully", updatedTask });
     } catch (error) {
+        // console.log(error)
         res.status(500).json({ error: error.message });
     }
 };

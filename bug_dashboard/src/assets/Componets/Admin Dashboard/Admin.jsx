@@ -20,15 +20,13 @@ export default function Admin() {
   const fetchPendingUsers = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/auth/pending-users`);
-      console.log("Fetched Users:", response.data); // Debug API response
-  
-      // Set state directly since response.data is already an array
+      console.log("Fetched Users:", response.data); 
       setPendingUsers(Array.isArray(response.data) ? response.data : []);
   
-      console.log("Updated State:", pendingUsers); // Debug state update
+      console.log("Updated State:", pendingUsers); 
     } catch (error) {
       console.error("Error fetching pending users", error);
-      setPendingUsers([]); // Ensure it's always an array
+      setPendingUsers([]); 
     }
   };
   

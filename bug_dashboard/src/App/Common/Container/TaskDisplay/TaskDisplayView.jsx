@@ -4,8 +4,9 @@
 import React, { useState, useEffect } from "react";
 import { Moon, Sun, Search, Edit, Eye, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Appbar/NavBar";
 
-export default function TaskDisplayView() {
+export default function TaskDisplayView({title, role}) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -27,6 +28,15 @@ export default function TaskDisplayView() {
   const Status = [
     "Unclaimed" , "In Process" ,"Complete" , "Reviewed"
   ];
+  const [ColoumParam , setColoumParam ] = useState([
+    "Task ID",
+    "Project Name",
+    "Industry",
+    "Tool Link",
+    "Status",
+    "Last Updated",
+    "Updated By",
+  ]); 
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +76,13 @@ export default function TaskDisplayView() {
     // console.log(project)
   }, []);
 
+  useEffect(()=>{
+    if(role=="coach"){
+      setColoumParam([...ColoumParam , "Action"]);
+      // ColoumParam.add("Action");
+    }
+  },[]);
+
   useEffect(() => {
 
         const filtered = tasks.filter((task) => {
@@ -73,7 +90,8 @@ export default function TaskDisplayView() {
           if(task.industry === industry || industry=='All')count+=1  ;
           if(task.status === status || status=='All')count+=1  ;
           if(task.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            task.projectName.toLowerCase().includes(searchQuery.toLowerCase())  )count+=1;
+            task.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            task.taskId.toLowerCase().includes(searchQuery.toLowerCase())  )count+=1;
           if(count==3)return true;
         });
         setProject(filtered);
@@ -122,6 +140,9 @@ export default function TaskDisplayView() {
       setProject(tasks); // Show all tasks if no filter is applied
     }
   }, [startDate, endDate]); 
+
+  
+  
   
   // if(loading) return <p>Loading task ...</p>;
   return (
@@ -130,10 +151,10 @@ export default function TaskDisplayView() {
         isDarkMode ? "dark bg-gray-900" : "bg-gray-50"
       }`}
     >
-      {/* Navbar */}
+      {/* <Navbar/> */}
       <nav className="bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Project Management Dashboard
+          {title}
         </h1>
         <div className="flex items-center space-x-4">
           <button
@@ -154,7 +175,6 @@ export default function TaskDisplayView() {
           </button>
         </div>
       </nav>
-
       {/* Main Content */}
       <main className="max-w-6xl mx-auto py-6 px-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -217,15 +237,7 @@ export default function TaskDisplayView() {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 ">
               <thead className="bg-gray-50 dark:bg-gray-800 ">
                 <tr>
-                  {[
-                    "Task ID",
-                    "Project Name",
-                    "Industry",
-                    "Tool Link",
-                    "Status",
-                    "Last Updated",
-                    "Updated By",
-                  ].map((heading) => (
+                  {ColoumParam.map((heading) => (
                     <th
                       key={heading}
                       className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400"
@@ -251,20 +263,31 @@ export default function TaskDisplayView() {
                         View Link
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-sm">
-                      <select
+                    <td className="px-4 py-5 text-sm">
+                      <div className="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-medium rounded-full">
+                        {project.status}
+                      </div>
+                      {/* <select
                         className="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-medium rounded-full"
                         value={project.status}
-                        onChange={(e) => handleStatusChange(e.target.value, project.taskId)}
+                        onChange={(e) => handleStatusChange(e.target.value, project._id)}
                       >
                         <option value="Unclaimed">Unclaimed</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                         <option value="Reviewed">Reviewed</option>
-                      </select>
+                      </select> */}
                     </td>
                     <td className="px-6 py-4 text-sm">{project.lastUpdated}</td>
                     <td className="px-6 py-4 text-sm">{project.updatedBy}</td>
+                    { role === "coach" && (<td className="px-6 py-4 text-sm flex space-x-2">
+                      <button className="px-3 py-1 bg-gray-300 rounded text-sm hover:bg-gray-400">
+                        <Edit className="h-4 w-4 inline-block" /> Edit
+                      </button>
+                      <button className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600">
+                        <Eye className="h-4 w-4 inline-block" /> Review
+                      </button>
+                    </td>)}
                   </tr>
                 ))}
               </tbody>

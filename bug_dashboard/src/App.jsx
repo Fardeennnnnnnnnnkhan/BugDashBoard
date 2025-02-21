@@ -5,6 +5,7 @@ import Signin from "./assets/Componets/Login page/signin";
 import Admin from "./assets/Componets/Admin Dashboard/Admin";
 import Hunter from "./assets/Componets/Hunter Dashboard/hunter";
 import Coach from "./assets/Componets/Coach Dashboard/coach";
+import Protected from "./App/Common/Auth/Protected";
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
@@ -18,11 +19,9 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
         <Route path="/signin" element={<Signin setUserRole={setUserRole} />} />
-        <Route path="/hunter" element={<Hunter/>} />
-        <Route path="/coach" element={<Coach/>} />
-        {/* ✅ Ensure Only Admins Can Access the Admin Page */}
+        <Route path="/hunter" element={ <Protected><Hunter/></Protected>} /> 
+        <Route path="/coach" element={<Protected><Coach/></Protected>} />
         <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} />
-        {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
       </Routes>
     </Router>
   );
