@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X } from "lucide-react";
+import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, HomeIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../Admin Dashboard/config";
@@ -56,6 +56,9 @@ export default function Admin() {
       <nav className="bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Project Management Dashboard</h1>
         <div className="flex items-center space-x-4">
+        <button onClick={() => { navigate("/admin-dashboard"); }} className="p-2 rounded-lg bg-yellow-500 text-white hover:bg-red-600">
+            <HomeIcon></HomeIcon>
+          </button>
           <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
             {isDarkMode ? <Sun className="w-5 h-5 text-gray-300" /> : <Moon className="w-5 h-5 text-gray-600" />}
           </button>
