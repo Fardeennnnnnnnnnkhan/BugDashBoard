@@ -5,6 +5,9 @@ import Signin from "./assets/Componets/Login page/signin";
 import Admin from "./assets/Componets/Admin Dashboard/Admin";
 import Hunter from "./assets/Componets/Hunter Dashboard/hunter";
 import Coach from "./assets/Componets/Coach Dashboard/coach";
+import Tool from './assets/Componets/Tool/tool';
+import TaskDetails from "./assets/Componets/Task/task";
+import Task from './assets/Componets/Task/task';
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
@@ -23,6 +26,11 @@ function App() {
         {/* ✅ Ensure Only Admins Can Access the Admin Page */}
         <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} />
         {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
+        <Route path="/tool" element={<Tool/>} />
+        <Route path="/task" element={<Task/>} />
+        <Route path="/task-details/:taskId" element={<TaskDetails />} />
+        
+        
       </Routes>
     </Router>
   );
