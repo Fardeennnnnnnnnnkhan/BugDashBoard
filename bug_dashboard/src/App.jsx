@@ -8,6 +8,7 @@ import Coach from "./assets/Componets/Coach Dashboard/coach";
 import Tool from './assets/Componets/Tool/tool';
 import TaskDetails from "./assets/Componets/Task/task";
 import Task from './assets/Componets/Task/task';
+
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
@@ -28,7 +29,10 @@ function App() {
         {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
         <Route path="/tool" element={<Tool/>} />
         <Route path="/task" element={<Task/>} />
+        
         <Route path="/task-details/:taskId" element={<TaskDetails />} />
+        
+        
         
         
       </Routes>

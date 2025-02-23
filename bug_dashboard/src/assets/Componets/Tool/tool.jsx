@@ -1,42 +1,48 @@
-import React, { useState } from 'react';
-import { ChevronDown, Upload, Plus } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, Upload, Plus } from "lucide-react";
 
 const SecurityTestingDashboard = () => {
-  const [scriptName, setScriptName] = useState('');
-  const [category, setCategory] = useState('');
-  const [scriptCode, setScriptCode] = useState('');
-  const [reportSummary, setReportSummary] = useState('');
-  const [difficultyRating, setDifficultyRating] = useState('Medium');
-  
-  // State for dropdowns
+  const [scriptName, setScriptName] = useState("");
+  const [category, setCategory] = useState("");
+  const [scriptCode, setScriptCode] = useState("");
+  const [reportSummary, setReportSummary] = useState("");
+  const [difficultyRating, setDifficultyRating] = useState("Medium");
   const [isTestingScriptsOpen, setIsTestingScriptsOpen] = useState(false);
   const [selectedScript, setSelectedScript] = useState(null);
 
+  // Role selection state
+  const [selectedRole, setSelectedRole] = useState("hunter");
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const roles = [
+    { id: "hunter", label: "View as Hunter" },
+    { id: "coach", label: "View as Coach" },
+    { id: "admin", label: "View as Admin" },
+  ];
+
+  const handleRoleChange = (role) => {
+    setSelectedRole(role);
+    setIsRoleDropdownOpen(false);
+
+    if (role === "coach") navigate("/coachview");
+    if (role === "admin") navigate("/adminview");
+  };
+
   // Testing scripts data
   const standardScripts = {
-    'XSS': {
-      description: 'Cross-site scripting test scripts',
-      scripts: [
-        'Basic XSS Test',
-        'DOM-based XSS Test',
-        'Stored XSS Test'
-      ]
+    XSS: {
+      description: "Cross-site scripting test scripts",
+      scripts: ["Basic XSS Test", "DOM-based XSS Test", "Stored XSS Test"],
     },
-    'SQL Injection': {
-      description: 'SQL injection test scripts',
-      scripts: [
-        'Basic SQL Injection',
-        'Time-based Blind',
-        'Union-based Test'
-      ]
-    }
+    "SQL Injection": {
+      description: "SQL injection test scripts",
+      scripts: ["Basic SQL Injection", "Time-based Blind", "Union-based Test"],
+    },
   };
 
   // Handle script selection
   const handleScriptSelect = (scriptType, script) => {
     setSelectedScript({ type: scriptType, name: script });
     setScriptName(script);
-    // Add example script code based on selection
     setScriptCode(`// ${script} Template\n// Add your test cases here\n`);
   };
 
@@ -44,8 +50,7 @@ const SecurityTestingDashboard = () => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Add your file handling logic here
-      console.log('File selected:', file.name);
+      console.log("File selected:", file.name);
     }
   };
 
@@ -54,11 +59,48 @@ const SecurityTestingDashboard = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-semibold">Task ID: BH-001</h1>
-          <a href="https://example.com/target-app" className="text-blue-500 hover:underline text-sm">
+          <a
+            href="https://example.com/target-app"
+            className="text-blue-500 hover:underline text-sm"
+          >
             https://example.com/target-app
           </a>
         </div>
-        <span className="text-blue-500">In Progress</span>
+
+        {/* Role Selector and Status */}
+        <div className="flex items-center gap-4">
+          <span className="text-blue-500">In Progress</span>
+          <div className="relative">
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50"
+              onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+            >
+              {roles.find((role) => role.id === selectedRole)?.label}
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${
+                  isRoleDropdownOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isRoleDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                {roles.map((role) => (
+                  <button
+                    key={role.id}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                    onClick={() => {
+                      setSelectedRole(role.id);
+                      setIsRoleDropdownOpen(false);
+                    }}
+                  >
+                    {role.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,31 +111,39 @@ const SecurityTestingDashboard = () => {
             <div className="space-y-4">
               {/* Testing Scripts Dropdown */}
               <div className="border rounded-lg">
-                <button 
+                <button
                   className="w-full p-3 flex items-center justify-between hover:bg-gray-50"
                   onClick={() => setIsTestingScriptsOpen(!isTestingScriptsOpen)}
                 >
                   <span>Standard Testing Scripts</span>
-                  <ChevronDown className={`h-4 w-4 transform transition-transform ${isTestingScriptsOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 transform transition-transform ${
+                      isTestingScriptsOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
                 {isTestingScriptsOpen && (
                   <div className="border-t p-3">
-                    {Object.entries(standardScripts).map(([category, content]) => (
-                      <div key={category} className="mb-4">
-                        <h3 className="font-medium mb-2">{category}</h3>
-                        <div className="space-y-2 pl-4">
-                          {content.scripts.map((script) => (
-                            <button
-                              key={script}
-                              className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm"
-                              onClick={() => handleScriptSelect(category, script)}
-                            >
-                              {script}
-                            </button>
-                          ))}
+                    {Object.entries(standardScripts).map(
+                      ([category, content]) => (
+                        <div key={category} className="mb-4">
+                          <h3 className="font-medium mb-2">{category}</h3>
+                          <div className="space-y-2 pl-4">
+                            {content.scripts.map((script) => (
+                              <button
+                                key={script}
+                                className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm"
+                                onClick={() =>
+                                  handleScriptSelect(category, script)
+                                }
+                              >
+                                {script}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 )}
               </div>
@@ -101,9 +151,21 @@ const SecurityTestingDashboard = () => {
               <div className="border rounded-lg p-3">
                 <h3 className="font-medium mb-2">Documentation & Tutorials</h3>
                 <ul className="space-y-2 text-blue-500">
-                  <li><a href="#" className="hover:underline">Web Security Testing Guide</a></li>
-                  <li><a href="#" className="hover:underline">API Security Testing Best Practices</a></li>
-                  <li><a href="#" className="hover:underline">Common Vulnerability Guide</a></li>
+                  <li>
+                    <a href="#" className="hover:underline">
+                      Web Security Testing Guide
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="hover:underline">
+                      API Security Testing Best Practices
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="hover:underline">
+                      Common Vulnerability Guide
+                    </a>
+                  </li>
                 </ul>
               </div>
 
@@ -148,19 +210,21 @@ const SecurityTestingDashboard = () => {
                 <input
                   type="text"
                   className="w-full p-2 border rounded"
-                  value={selectedScript?.name || ''}
+                  value={selectedScript?.name || ""}
                   readOnly
                 />
               </div>
 
-              <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
-                   onClick={() => document.getElementById('file-upload').click()}>
+              <div
+                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
+                onClick={() => document.getElementById("file-upload").click()}
+              >
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <div className="mt-2">Upload a file</div>
-                <input 
+                <input
                   id="file-upload"
-                  type="file" 
-                  className="hidden" 
+                  type="file"
+                  className="hidden"
                   onChange={handleFileUpload}
                 />
               </div>
@@ -171,20 +235,26 @@ const SecurityTestingDashboard = () => {
               </div>
 
               <div>
-                <label className="block mb-2">Potential Vulnerabilities Identified</label>
+                <label className="block mb-2">
+                  Potential Vulnerabilities Identified
+                </label>
                 <textarea className="w-full p-2 border rounded min-h-[100px]" />
               </div>
 
               <div>
                 <label className="block mb-2">Supporting Files</label>
-                <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
-                     onClick={() => document.getElementById('supporting-files').click()}>
+                <div
+                  className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
+                  onClick={() =>
+                    document.getElementById("supporting-files").click()
+                  }
+                >
                   <Plus className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="mt-2">Add files</div>
-                  <input 
-                    id="supporting-files" 
-                    type="file" 
-                    multiple 
+                  <input
+                    id="supporting-files"
+                    type="file"
+                    multiple
                     className="hidden"
                     onChange={handleFileUpload}
                   />
