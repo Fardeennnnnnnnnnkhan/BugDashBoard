@@ -128,7 +128,11 @@ import TaskDisplayView from "../../../App/Common/Container/TaskDisplay/TaskDispl
 export default function Coach(){
   return (
     <div>
-      <TaskDisplayView title="Team Lead Dashboard" role="coach"/>
+      <TaskDisplayView title={"Team Lead Dashboard"} role={"coach"}/>
     </div>
   ); 
 }
+
+{/* <div>
+    <TaskDisplayView title={'Project Management Dashboard'}/>
+  </div>) */}
