@@ -47,7 +47,7 @@ exports.updateTaskStatus = async (req, res) => {
         const updatedTask = await taskService.updateTaskStatus(taskId, status, updatedBy);
         const updatedTaskChange = await taskService.addTaskChange(taskId, status, updatedBy);
         if (!updatedTask) return res.status(404).json({ message: "Task not found" });
-
+        
         res.status(200).json({ message: "Task status updated successfully", updatedTask });
     } catch (error) {
         // console.log(error)
