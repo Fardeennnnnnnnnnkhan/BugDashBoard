@@ -49,7 +49,8 @@ const upload = multer({
 const uploadToGridFS = async (req, res, next) => {
 //   console.log("Inside uploadToGridFS middleware");
 //   console.log("Bucket Status:", bucket);
-  
+console.log(req.files.scriptFile)
+  console.log(req.files.supportFile)
   if (!req.files || (!req.files.scriptFile && !req.files.supportFile)) {
     return res.status(400).json({ error: "Both files are required." });
   }
@@ -87,7 +88,6 @@ const uploadToGridFS = async (req, res, next) => {
       });
     });
   };
-
   try {
     const uploadedFiles = [];
 

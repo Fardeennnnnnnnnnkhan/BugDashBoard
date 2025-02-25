@@ -28,7 +28,7 @@ app.use("/api/taskReview", taskReviewRoutes);
 app.use("/api/finalReport", finalReportRoutes);
 
 app.use("/",(req,res)=>{
-    // console.log("Connected to backend...")
+    console.log("Connected to backend...")
 }); 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

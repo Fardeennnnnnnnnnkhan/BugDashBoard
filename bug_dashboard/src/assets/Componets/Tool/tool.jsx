@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, Upload, Plus } from "lucide-react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const SecurityTestingDashboard = () => {
   const [scriptName, setScriptName] = useState("");
@@ -9,6 +11,33 @@ const SecurityTestingDashboard = () => {
   const [difficultyRating, setDifficultyRating] = useState("Medium");
   const [isTestingScriptsOpen, setIsTestingScriptsOpen] = useState(false);
   const [selectedScript, setSelectedScript] = useState(null);
+  const [observedBehavior, setObservedBehavior] = useState("");
+  const [vulnerabilities, setVulnerabilities] = useState("");
+  const [file, setFile] = useState(null);
+  const [supportingFiles, setSupportingFiles] = useState(null);
+  const { taskId } = useParams(); // Extract taskId from URL
+  const [reviewList, setReviewList] = useState([]);
+
+  useEffect(() => {
+    const fetchTaskReview = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/taskReview/allreview/${taskId}`
+        );
+        const data = await response.json();
+        setReviewList(data.allTask);
+        console.log(data)
+        reviewList.map((index)=>{
+          console.log(index)
+        })
+        console.log(Array.isArray(reviewList));
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    fetchTaskReview();
+  }, []);
 
   // Role selection state
   const [selectedRole, setSelectedRole] = useState("hunter");
@@ -49,10 +78,115 @@ const SecurityTestingDashboard = () => {
   // Handle file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+    alert("handlefile hit")
+    console.log(event.target.files[0]);
+    if (event.target.id === "file-upload") {
+      setFile(event.target.files[0]);
+      alert("added file successfully");
+    } else {
+      // alert(event.target.files)
+      setSupportingFiles(event.target.files[0]);
+      alert("added upportingFiles successfully");
+    }
     if (file) {
       console.log("File selected:", file.name);
     }
   };
+
+  const handleFinalReportSubmit = async(e)=>{
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/finalReport/createOrUpdate",
+        {
+          taskId: taskId,  // No need to use template literals
+          reportSummary: reportSummary,
+          difficulty: difficultyRating,
+          updatedBy: localStorage.getItem("userName"),
+        },
+        {
+          headers: { "Content-Type": "application/json" }, // Use application/json
+        }
+      );
+      alert("submitted successfully")
+      setReportSummary("")
+    }
+    catch(e){
+      alert("Not able to submit")
+    }
+  }
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    const formData = new FormData();
+    // formData.append("scriptName", selectedScript?.name || ""); // Pass selected script name
+    if(!file ){
+      alert("please select file"); return ;
+    }
+    if(!supportingFiles){
+      alert("please select supportingFiles");return ;
+    }
+    formData.append("scriptFile", file);
+    formData.append("observedBehavior", observedBehavior);
+    formData.append("vulnerabilities", vulnerabilities);
+    formData.append("taskId", taskId);
+    formData.append("supportFile", supportingFiles);
+    formData.append("reviewBy", localStorage.getItem("userName"));
+
+    // Array.from(supportingFiles).forEach((file) => {
+
+    // });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/taskReview/create",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+
+      // const data = await response.json();
+      console.log("Response:", response.data);
+      alert("Review submitted successfully!");
+
+      setReviewList([...reviewList,response.data.taskReview]);
+
+      setObservedBehavior("");
+      setVulnerabilities("");
+      setFile(null);
+      setSupportingFiles(null);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to submit." , error);
+    }
+  };
+  const fetchFile = async (fileId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/file/${fileId}`, {
+        responseType: "blob", // Ensures we get the file as a binary Blob
+      });
+  
+      // Create a URL for the Blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+  
+      // Create an anchor element to trigger download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `file_${fileId}`; // Default filename (can be changed)
+      document.body.appendChild(a);
+      a.click();
+  
+      // Cleanup
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
+  };
+  
 
   return (
     <div className="max-w-6xl mx-auto p-4">
@@ -231,6 +365,26 @@ const SecurityTestingDashboard = () => {
 
               <div>
                 <label className="block mb-2">Observed Behavior</label>
+                <textarea
+                  className="w-full p-2 border rounded min-h-[100px]"
+                  value={observedBehavior}
+                  onChange={(e) => setObservedBehavior(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2">
+                  Potential Vulnerabilities Identified
+                </label>
+                <textarea
+                  className="w-full p-2 border rounded min-h-[100px]"
+                  value={vulnerabilities}
+                  onChange={(e) => setVulnerabilities(e.target.value)}
+                />
+              </div>
+
+              {/* <div>
+                <label className="block mb-2">Observed Behavior</label>
                 <textarea className="w-full p-2 border rounded min-h-[100px]" />
               </div>
 
@@ -239,9 +393,28 @@ const SecurityTestingDashboard = () => {
                   Potential Vulnerabilities Identified
                 </label>
                 <textarea className="w-full p-2 border rounded min-h-[100px]" />
-              </div>
+              </div> */}
 
               <div>
+                <label className="block mb-2">Supporting Files</label>
+                <div
+                  className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
+                  onClick={() =>
+                    document.getElementById("supporting-files").click()
+                  }
+                >
+                  <div className="mt-2">Add files</div>
+                  <input
+                    id="supporting-files"
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                </div>
+              </div>
+
+              {/* <div>
                 <label className="block mb-2">Supporting Files</label>
                 <div
                   className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
@@ -259,13 +432,73 @@ const SecurityTestingDashboard = () => {
                     onChange={handleFileUpload}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+              <button
+                className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                onClick={(e) => handleSubmit(e)} // Pass event
+              >
                 Submit Review
               </button>
             </div>
           </div>
+
+          {Array.isArray(reviewList) &&
+            reviewList.map((review) => (
+              <div key={review._id || index} className="border p-4 rounded-lg shadow-md">
+    <p><strong>Reviewed By:</strong> {review.reviewBy}</p>
+    <p><strong>Observed Behavior:</strong> {review.observedBehavior}</p>
+    <p><strong>Vulnerabilities:</strong> {review.vulnerabilities}</p>
+    <p><strong>Last Review:</strong> {new Date(review.lastReview).toLocaleString()}</p>
+    
+    {/* Clickable links to fetch files */}
+    <p>
+      <strong>Script File:</strong>{" "}
+      <span
+        className="text-blue-500 cursor-pointer underline"
+        onClick={() => fetchFile(review.scriptFile)}
+      >
+        Download Script
+      </span>
+    </p>
+
+    <p>
+      <strong>Supporting File:</strong>{" "}
+      <span
+        className="text-blue-500 cursor-pointer underline"
+        onClick={() => fetchFile(review.supportFile)}
+      >
+        Download Support File
+      </span>
+    </p>
+    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+    onClick={()=>{
+      // async()=>{try {
+      //   const response = await axios.post(
+      //     "http://localhost:3000/api/finalReport/createOrUpdate",
+      //     {
+      //       taskId: taskId,  // No need to use template literals
+      //       reportSummary: reportSummary,
+      //       difficulty: difficultyRating,
+      //       updatedBy: localStorage.getItem("userName"),
+      //     },
+      //     {
+      //       headers: { "Content-Type": "application/json" }, // Use application/json
+      //     }
+      //   );
+      //   alert("submitted successfully")
+      //   setReportSummary("")
+      // }
+      // catch(e){
+      //   alert("Not able to submit")
+      // }}
+    }}
+    >
+  Delete
+</button>
+  </div>
+              
+            ))}
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">Final Report</h2>
@@ -293,7 +526,9 @@ const SecurityTestingDashboard = () => {
                 </select>
               </div>
 
-              <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+              <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+              onClick={(e) => handleFinalReportSubmit(e)}
+              >
                 Submit Final Report
               </button>
             </div>

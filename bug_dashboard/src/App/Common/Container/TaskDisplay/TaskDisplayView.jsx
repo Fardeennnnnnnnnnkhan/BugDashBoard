@@ -262,7 +262,7 @@ export default function TaskDisplayView({ title, role }) {
                         className="text-blue-500 underline cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevents row click event
-                          navigate(`/task/${project.taskId}`);
+                          navigate(`/task/${project._id}`);
                         }}
                       >
                         {project.taskId}
@@ -272,7 +272,7 @@ export default function TaskDisplayView({ title, role }) {
                     <td className="px-6 py-4 text-sm">{project.industry}</td>
                     <td className="px-6 py-4 text-sm">
                       <button
-                        onClick={() => handleToolClick(project.taskId)}
+                        onClick={() => handleToolClick(project._id)}
                         className="text-blue-500 hover:underline cursor-pointer"
                       >
                         View Link

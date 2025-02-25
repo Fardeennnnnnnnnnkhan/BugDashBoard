@@ -30,8 +30,8 @@ function App() {
         <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} />
 
         {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
-        <Route path="/tool/:taskid" element={<Tool/>} />
-        <Route path="/task/:taskid" element={<Task/>} />
+        <Route path="/tool/:taskId" element={<Tool/>} />
+        <Route path="/task/:taskId" element={<Task/>} />
         
         <Route path="/task-details/:taskId" element={<TaskDetails />} />
         
