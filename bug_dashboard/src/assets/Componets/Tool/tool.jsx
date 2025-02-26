@@ -78,8 +78,6 @@ const SecurityTestingDashboard = () => {
   // Handle file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    alert("handlefile hit")
-    console.log(event.target.files[0]);
     if (event.target.id === "file-upload") {
       setFile(event.target.files[0]);
       alert("added file successfully");
@@ -186,6 +184,40 @@ const SecurityTestingDashboard = () => {
       console.error("Error fetching file:", error);
     }
   };
+
+  const deleteReivew = async(id , supportFile ,scriptFile)=>{
+    try{
+      const response1 = await axios.delete(
+        `http://localhost:3000/api/taskReview/fileDelete/${supportFile}`,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+    
+      console.log("Deleting task review:", id);
+      const response2 = await axios.delete(
+        `http://localhost:3000/api/taskReview/deleteReview/${id}`,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+    
+      console.log("Deleting scriptFile:", scriptFile);
+      const response3 = await axios.delete(
+        `http://localhost:3000/api/taskReview/fileDelete/${scriptFile}`,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      setReviewList((prevList) => prevList.filter((review) => review._id !== id));
+      alert("deleted the review")
+    }
+    catch(error){
+      alert("not able to delete")
+      console.error("Error fetching file:", error);
+    }
+  }
   
 
   return (
@@ -473,25 +505,7 @@ const SecurityTestingDashboard = () => {
     </p>
     <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
     onClick={()=>{
-      // async()=>{try {
-      //   const response = await axios.post(
-      //     "http://localhost:3000/api/finalReport/createOrUpdate",
-      //     {
-      //       taskId: taskId,  // No need to use template literals
-      //       reportSummary: reportSummary,
-      //       difficulty: difficultyRating,
-      //       updatedBy: localStorage.getItem("userName"),
-      //     },
-      //     {
-      //       headers: { "Content-Type": "application/json" }, // Use application/json
-      //     }
-      //   );
-      //   alert("submitted successfully")
-      //   setReportSummary("")
-      // }
-      // catch(e){
-      //   alert("Not able to submit")
-      // }}
+      deleteReivew(review._id , review.supportFile , review.scriptFile)
     }}
     >
   Delete

@@ -42,7 +42,6 @@ exports.updateTaskStatus = async (req, res) => {
     try {
         const { status, updatedBy } = req.body;
         const { taskId } = req.params;
-        // console.log("swaponil here");
 
         const updatedTask = await taskService.updateTaskStatus(taskId, status, updatedBy);
         const updatedTaskChange = await taskService.addTaskChange(taskId, status, updatedBy);

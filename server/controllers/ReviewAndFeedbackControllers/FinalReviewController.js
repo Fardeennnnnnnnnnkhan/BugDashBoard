@@ -30,3 +30,19 @@ exports.getFinalReportByTaskId = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+exports.reviewFeedback = async(req,res)=>{
+    try{
+        console.log("swapnil is here")
+        const feedback = await TaskReview.findOneAndUpdate(
+            {_id : req.params.reviewId},
+            {feedBack : req.body.feedBack},
+            { new :true},
+        )
+        res.status(200).json({message:"feedback send", feedback});
+    }
+    catch(error){
+        res.status(500).json({error:error.message});
+    }
+}
