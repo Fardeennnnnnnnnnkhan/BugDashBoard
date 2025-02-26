@@ -7,6 +7,7 @@ import Hunter from "./assets/Componets/Hunter Dashboard/hunter";
 import Coach from "./assets/Componets/Coach Dashboard/coach";
 import Protected from "./App/Common/Auth/Protected";
 import AdminBoard from "./assets/Componets/Admin Dashboard/AdminDashboard";
+import Leaderboard from './assets/Componets/Lederboard/lederboard';
 
 import Tool from './assets/Componets/Tool/tool';
 import TaskDetails from "./assets/Componets/Task/task";
@@ -34,6 +35,8 @@ function App() {
         <Route path="/task/:taskId" element={<Task/>} />
         
         <Route path="/task-details/:taskId" element={<TaskDetails />} />
+        <Route path="/Leaderboard" element={<Leaderboard />} />
+        
         
 
       </Routes>
