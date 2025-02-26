@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X } from "lucide-react";
+import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, Trophy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "./config";
@@ -69,6 +69,19 @@ export default function Admin() {
       <nav className="bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Project Management Dashboard</h1>
         <div className="flex items-center space-x-4">
+          {/* Leaderboard Button with Gaming Feel */}
+          <Link 
+            to="/leaderboard" 
+            className="relative px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 group"
+          >
+            <span className="flex items-center">
+              <Trophy className="w-5 h-5 mr-2 animate-pulse text-yellow-300" />
+              Leaderboard
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            </span>
+            <span className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+          </Link>
+          
           <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
             {isDarkMode ? <Sun className="w-5 h-5 text-gray-300" /> : <Moon className="w-5 h-5 text-gray-600" />}
           </button>

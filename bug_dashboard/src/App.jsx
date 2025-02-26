@@ -8,6 +8,7 @@ import Coach from "./assets/Componets/Coach Dashboard/coach";
 import Tool from './assets/Componets/Tool/tool';
 import TaskDetails from "./assets/Componets/Task/task";
 import Task from './assets/Componets/Task/task';
+import Leaderboard from './assets/Componets/Lederboard/lederboard';
 
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
@@ -31,6 +32,7 @@ function App() {
         <Route path="/task" element={<Task/>} />
         
         <Route path="/task-details/:taskId" element={<TaskDetails />} />
+        <Route path="/Leaderboard" element={<Leaderboard />} />
         
         
         
