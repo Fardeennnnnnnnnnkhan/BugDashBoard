@@ -16,9 +16,9 @@ export default function Leaderboard() {
     
     setTimeout(() => {
       const sampleData = [
-        { id: 1, name: "Mrinal", tasksCompleted: 47, currentTask: "API Integration", performance: 98, reputation: 4875 },
-        { id: 2, name: "Aniket", tasksCompleted: 42, currentTask: "UI Design", performance: 95, reputation: 4210 },
-        { id: 3, name: "Swapnil", tasksCompleted: 39, currentTask: "Database Setup", performance: 94, reputation: 3950 },
+        { id: 1, name: "Swapnil", tasksCompleted: 39, currentTask: "Database Setup and backend", performance: 100, reputation: 5000 },
+        { id: 2, name: "Mrinal", tasksCompleted: 47, currentTask: "API Integration", performance: 98, reputation: 4875 },
+        { id: 3, name: "Aniket", tasksCompleted: 42, currentTask: "UI Design", performance: 95, reputation: 4210 },
         { id: 4, name: "Shruti", tasksCompleted: 36, currentTask: "Testing", performance: 92, reputation: 3650 },
         { id: 5, name: "Janvi", tasksCompleted: 33, currentTask: "Documentation", performance: 90, reputation: 3320 },
         { id: 6, name: "Rohit Sharma", tasksCompleted: 31, currentTask: "Bug Fixing", performance: 88, reputation: 3100 },
