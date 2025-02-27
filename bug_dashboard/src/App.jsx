@@ -12,6 +12,7 @@ import Leaderboard from './assets/Componets/Lederboard/lederboard';
 import Tool from './assets/Componets/Tool/tool';
 import TaskDetails from "./assets/Componets/Task/task";
 import Task from './assets/Componets/Task/task';
+import { CoachView } from "./assets/Componets/Tool/coach-view";
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
@@ -33,7 +34,7 @@ function App() {
         {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
         <Route path="/tool/:taskId" element={<Tool/>} />
         <Route path="/task/:taskId" element={<Task/>} />
-        
+        <Route path="/tool-coach/:taskId" element={<CoachView/>} />
         <Route path="/task-details/:taskId" element={<TaskDetails />} />
         <Route path="/Leaderboard" element={<Leaderboard />} />
         

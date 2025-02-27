@@ -450,7 +450,7 @@ const SecurityTestingDashboard = () => {
     <p><strong>Observed Behavior:</strong> {review.observedBehavior}</p>
     <p><strong>Vulnerabilities:</strong> {review.vulnerabilities}</p>
     <p><strong>Last Review:</strong> {new Date(review.lastReview).toLocaleString()}</p>
-    
+    <p><strong>FeedBack:</strong> {review.feedback}</p>
     {/* Clickable links to fetch files */}
     <p>
       <strong>Script File:</strong>{" "}
