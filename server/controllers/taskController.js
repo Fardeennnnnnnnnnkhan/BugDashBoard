@@ -1,3 +1,5 @@
+const Task = require("../models/Task");
+const TaskReviewAndFeedback = require("../models/TaskReview/TaskReviewAndFeedback");
 const taskService = require("../Services/taskServices");
 
 exports.createTask = async (req, res) => {
@@ -45,6 +47,25 @@ exports.updateTaskStatus = async (req, res) => {
 
         const updatedTask = await taskService.updateTaskStatus(taskId, status, updatedBy);
         const updatedTaskChange = await taskService.addTaskChange(taskId, status, updatedBy);
+        if (!updatedTask) return res.status(404).json({ message: "Task not found" });
+        
+        res.status(200).json({ message: "Task status updated successfully", updatedTask });
+    } catch (error) {
+        // console.log(error)
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAccordingToStatus = async (req, res) => {
+    try {
+        // const { status, updatedBy } = req.body;
+        // const { taskId } = req.params;
+        console.log("swaponil here");
+
+        const tasks = await Task.find({status:"Completed"});
+        const completedtasks = await TaskReview.find()
+        // const updatedTask = await taskService.updateTaskStatus(taskId, status, updatedBy);
+        // const updatedTaskChange = await taskService.addTaskChange(taskId, status, updatedBy);
         if (!updatedTask) return res.status(404).json({ message: "Task not found" });
         
         res.status(200).json({ message: "Task status updated successfully", updatedTask });
