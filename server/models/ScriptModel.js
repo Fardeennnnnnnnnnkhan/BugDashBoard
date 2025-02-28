@@ -34,6 +34,8 @@ const ScriptSchema = new mongoose.Schema({
     tools_technique: { type: String },
     created_at: { type: Date, default: Date.now }
   });
+
+  //
   
 const Script = mongoose.model("Script", ScriptSchema);
 module.exports = Script;
