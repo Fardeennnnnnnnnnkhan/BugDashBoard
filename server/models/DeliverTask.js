@@ -32,4 +32,4 @@ const deliveredTaskSchema = new mongoose.Schema({
     deliveredAt: { type: Date, default: Date.now } // Timestamp of delivery
 });
 
-const DeliveredTask = mongoose.model("DeliveredTask", deliveredTaskSchema);
+module.exports = mongoose.model("DeliveredTask", deliveredTaskSchema);
