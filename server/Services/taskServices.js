@@ -40,3 +40,4 @@ exports.addTaskChange = async ( taskId, status, updatedBy ) => {
     const taskChange = new TaskChangeHistory({taskChangeId:taskId, statusChangeTo:status, changeBy: updatedBy , lastUpdated: Date.now()})
     return await taskChange.save();
 }
+

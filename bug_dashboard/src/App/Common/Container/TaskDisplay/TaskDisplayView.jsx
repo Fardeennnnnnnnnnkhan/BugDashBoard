@@ -262,7 +262,7 @@ export default function TaskDisplayView({ title, role }) {
                         className="text-blue-500 underline cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevents row click event
-                          navigate(`/task/${project.taskId}`);
+                          navigate(`/task/${project._id}`);
                         }}
                       >
                         {project.taskId}

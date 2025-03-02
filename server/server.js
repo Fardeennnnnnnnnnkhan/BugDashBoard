@@ -9,7 +9,8 @@ const adminRoutes = require('./routes/adminRoutes')
 const taskRoute = require('./routes/taskRoutes')
 const taskReviewRoutes = require('./routes/ReviewAndFeedback/reviewRoutes')
 const finalReportRoutes = require('./routes/ReviewAndFeedback/finalReviewRoutes')
-
+const taskHistoryRoutes = require('./routes/taskHistoryRoutes');
+const taskLeaderboard =require('./routes/taskLeaderboard')
 // const expressFormidable = require("express-formidable")
 dotenv.config();
 
@@ -26,6 +27,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/task", taskRoute);
 app.use("/api/taskReview", taskReviewRoutes);
 app.use("/api/finalReport", finalReportRoutes);
+app.use('/api/task-history', taskHistoryRoutes);
+app.use('/api', taskLeaderboard);
 
 app.use("/",(req,res)=>{
     // console.log("Connected to backend...")
