@@ -5,6 +5,7 @@ const FinalReportSchema = new mongoose.Schema({
     reportSummary: { type: String, required: true },
     difficulty: { type: String, required: true, enum: ["Easy", "Medium", "Hard"] },
     updatedBy: { type: String, required: true }, // Stores who last updated the report
+    feedBack:{type :String ,default:"No reviewed"},
     lastUpdated: { type: Date, default: Date.now } // Stores last update timestamp
 });
 

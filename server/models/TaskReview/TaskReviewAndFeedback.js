@@ -11,7 +11,8 @@ const TaskReviewSchema = new mongoose.Schema({
     vulnerabilities: { type: String, required: false },
     supportFile: { type: mongoose.Schema.Types.ObjectId, ref: "uploads.files", required: false }, // Array for multiple files
     reviewBy: { type: String, required: true },
+    feedBack:{type :String ,default:"No reviewed"},
     lastReview: { type: Date, default: Date.now },
-});
+}); 
 
 module.exports = mongoose.model("TaskReview", TaskReviewSchema);

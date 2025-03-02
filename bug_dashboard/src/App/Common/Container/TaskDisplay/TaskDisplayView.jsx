@@ -19,7 +19,9 @@ export default function TaskDisplayView({ title, role }) {
   };
 
   const handleToolClick = (taskId) => {
-    navigate(`/tool/${taskId}`);
+    if(role == "coach")navigate(`/tool-coach/${taskId}`)
+      else if(role == "admin"){navigate(`/tool-admin/${taskId}`)}
+    else{ navigate(`/tool/${taskId}`);}
   };
   const [project, setProject] = useState([]);
   const Status = ["Unclaimed", "In Process", "Complete", "Reviewed"];
