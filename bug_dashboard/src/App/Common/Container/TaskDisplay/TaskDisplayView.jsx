@@ -20,6 +20,7 @@ export default function TaskDisplayView({ title, role }) {
 
   const handleToolClick = (taskId) => {
     if(role == "coach")navigate(`/tool-coach/${taskId}`)
+      else if(role == "admin"){navigate(`/tool-admin/${taskId}`)}
     else{ navigate(`/tool/${taskId}`);}
   };
   const [project, setProject] = useState([]);

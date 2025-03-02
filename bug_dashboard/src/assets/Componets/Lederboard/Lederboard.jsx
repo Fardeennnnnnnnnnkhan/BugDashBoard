@@ -16,7 +16,7 @@ export default function Leaderboard() {
     
     setTimeout(() => {
       const sampleData = [
-        { id: 1, name: "Swapnil", tasksCompleted: 39, currentTask: "Database Setup and backend", performance: 100, reputation: 5000 },
+        { id: 1, name: "Swapnil", tasksCompleted: 39, currentTask: "Database Setup and backend", performance: 100, reputation: 10000 },
         { id: 2, name: "Mrinal", tasksCompleted: 47, currentTask: "API Integration", performance: 98, reputation: 4875 },
         { id: 3, name: "Aniket", tasksCompleted: 42, currentTask: "UI Design", performance: 95, reputation: 4210 },
         { id: 4, name: "Shruti", tasksCompleted: 36, currentTask: "Testing", performance: 92, reputation: 3650 },

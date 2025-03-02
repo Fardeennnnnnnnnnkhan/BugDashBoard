@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import axios from 'axios';
 
-export function ReviewModal({ isOpen, onClose, review, onSubmitReview }) {
+export function ReviewModal({ isOpen, onClose, review,id, onSubmitReview }) {
   const [feedback, setFeedback] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmitReview(feedback);
-    onClose();
+  const handleSubmit = async (e) => {
+    try{
+      const response = await axios.patch(`http://localhost:3000/api/taskReview/addFeedBack/${id}`,
+        {
+            "feedBack":feedback
+        });
+        alert("added the review successfully");
+        
+    }catch(error){
+      console.log(error);
+      alert("not able to submit");
+    }
   };
+
+  const handleFeedBack = ()=>{
+
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -24,14 +37,37 @@ export function ReviewModal({ isOpen, onClose, review, onSubmitReview }) {
           </div>
 
           <div className="space-y-6">
-            <div>
-              <h3 className="font-medium mb-2">Script Details</h3>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="font-medium">{review.script}</p>
-                <p className="mt-2 text-sm text-gray-600">{review.behavior}</p>
-                <p className="mt-2 text-sm text-gray-600">{review.vulnerabilities}</p>
-              </div>
-            </div>
+          {Array.isArray(review) &&
+            review.map((review) => (
+              <div key={review._id || index} className="border p-4 rounded-lg shadow-md">
+    <p><strong>Reviewed By:</strong> {review.reviewBy}</p>
+    <p><strong>Observed Behavior:</strong> {review.observedBehavior}</p>
+    <p><strong>Vulnerabilities:</strong> {review.vulnerabilities}</p>
+    <p><strong>Last Review:</strong> {new Date(review.lastReview).toLocaleString()}</p>
+    <p><strong>FeedBack:</strong> {review.feedBack}</p>
+    {/* Clickable links to fetch files */}
+    <p>
+      <strong>Script File:</strong>{" "}
+      <span
+        className="text-blue-500 cursor-pointer underline"
+        onClick={() => fetchFile(review.scriptFile)}
+      >
+        Download Script
+      </span>
+    </p>
+
+    <p>
+      <strong>Supporting File:</strong>{" "}
+      <span
+        className="text-blue-500 cursor-pointer underline"
+        onClick={() => fetchFile(review.supportFile)}
+      >
+        Download Support File
+      </span>
+    </p>
+  </div>
+              
+            ))}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -57,6 +93,7 @@ export function ReviewModal({ isOpen, onClose, review, onSubmitReview }) {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  // onClick={handleFeedBack}
                 >
                   Submit Review
                 </button>

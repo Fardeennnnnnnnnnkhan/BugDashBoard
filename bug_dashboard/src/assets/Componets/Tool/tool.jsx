@@ -235,7 +235,7 @@ const SecurityTestingDashboard = () => {
 
         {/* Role Selector and Status */}
         <div className="flex items-center gap-4">
-          <span className="text-blue-500">In Progress</span>
+          <span className="text-blue-500">{}</span>
           <div className="relative">
             <button
               className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50"
@@ -482,7 +482,7 @@ const SecurityTestingDashboard = () => {
     <p><strong>Observed Behavior:</strong> {review.observedBehavior}</p>
     <p><strong>Vulnerabilities:</strong> {review.vulnerabilities}</p>
     <p><strong>Last Review:</strong> {new Date(review.lastReview).toLocaleString()}</p>
-    <p><strong>FeedBack:</strong> {review.feedback}</p>
+    <p><strong>FeedBack:</strong> {review.feedBack}</p>
     {/* Clickable links to fetch files */}
     <p>
       <strong>Script File:</strong>{" "}

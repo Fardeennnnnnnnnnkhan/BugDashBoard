@@ -3,6 +3,7 @@ import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, Trophy } from "lucide-r
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "./config";
+import AdminBoard from "./AdminDashboard";
 
 export default function Admin() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -133,7 +134,8 @@ export default function Admin() {
         </div>
 
         {/* Projects Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <AdminBoard/>
+        {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
@@ -208,7 +210,7 @@ export default function Admin() {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </main>
     </div>
   );
