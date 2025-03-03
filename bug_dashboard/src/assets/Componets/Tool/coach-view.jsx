@@ -10,14 +10,15 @@ export function CoachView({ userRole }) {
   const [tasks, setTasks] = useState([]);
     const [selectedReview, setSelectedReview] = useState(null);
   const [selectedFinalReport, setSelectedFinalReport] = useState(null);
+  const {taskId} = useParams();
 
   useEffect(() => {
     const fetchCompletedTasks = async () => {
       try {
-        console.log(userRole)
-        const response = await axios.get(`http://localhost:3000/api/task/statusFetch/${userRole==="coach"?"Completed":"Reviewed"}`);
+        console.log(taskId)
+        const response = await axios.get(`http://localhost:3000/api/task/statusFetch/${userRole === "coach" ? "Completed" : "Reviewed"}?taskId=${taskId}`);
         console.log(response.data.tasks);
-        setTasks(response.data.tasks);
+        setTasks( response.data.tasks);
 
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -51,14 +52,16 @@ export function CoachView({ userRole }) {
     }
    }
 
-   const approved = async (taskId,status)=>{
+   const approved = async (taskId,status,taskToDeliver)=>{
 
     try{
       console.log(taskId);
+      // taskToDeliver.status=
         const response = await axios.post(`http://localhost:3000/api/task/deliver/${taskId}`,
             {
                 status:status,
-                updatedBy:"Admin"
+                updatedBy:"Admin",
+                taskToDeliver
             }
         );
         console.log(taskId);
@@ -84,7 +87,7 @@ export function CoachView({ userRole }) {
               <div className="flex items-center space-x-2">
                 {userRole === 'admin' ? (
                   <button
-                    onClick={() => approved(task._id, 'approved')}
+                    onClick={() => approved(task._id, 'approved',task)}
                     className="flex items-center px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200"
                   >
                     <Send className="w-4 h-4 mr-1" /> Approve for Delivery

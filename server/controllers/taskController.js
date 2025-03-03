@@ -1,7 +1,7 @@
 const Task = require("../models/Task");
 const TaskReviewAndFeedback = require("../models/TaskReview/TaskReviewAndFeedback");
 const taskService = require("../Services/taskServices");
-
+const DeliveredTask =require("../models/DeliverTask")
 exports.createTask = async (req, res) => {
   try {
     const task = await taskService.createTask(req.body);
@@ -14,6 +14,7 @@ exports.createTask = async (req, res) => {
 exports.getAllTasks = async (req, res) => {
   try {
     const tasks = await taskService.getAllTasks();
+    console.log(tasks)
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -49,7 +50,7 @@ exports.updateTaskStatus = async (req, res) => {
   try {
     const { status, updatedBy } = req.body;
     const { taskId } = req.params;
-
+    // const putDeliverTask = await Del
     const updatedTask = await taskService.updateTaskStatus(
       taskId,
       status,
@@ -73,10 +74,19 @@ exports.updateTaskStatus = async (req, res) => {
 
 exports.getAccordingToStatus = async (req, res) => {
   try {
-    const tasks = await Task.find({ status: req.params.status })
+    const {taskId} = req.query;
+    let tasks ;
+    if(taskId == "all" || !taskId){
+        tasks = await Task.find({  status: req.params.status })
+      .populate({ path: "reviews", strictPopulate: false }) // Populates the 'reviews' array
+      .populate({ path: "finalReview", strictPopulate: false })
+    }
+    else
+     tasks = await Task.find({_id: taskId ,  status: req.params.status })
       .populate({ path: "reviews", strictPopulate: false }) // Populates the 'reviews' array
       .populate({ path: "finalReview", strictPopulate: false })
       
+    //   console.log(tasks);
 
     if (!tasks)
       return res.status(404).json({ message: "Task not found" });
@@ -93,14 +103,17 @@ exports.getAccordingToStatus = async (req, res) => {
 exports.deliverTask = async (req,res)=>{
     try{
         // console.log(taskId)
-        const {  updatedBy } = req.body;
+        const {  updatedBy,taskToDeliver } = req.body;
     const { taskId } = req.params;
-
+    taskToDeliver.status = "Deliver"
+    const putDeliverTask = new DeliveredTask(taskToDeliver);
+    await putDeliverTask.save();
     const updatedTask = await Task.findOneAndUpdate(
       {_id:taskId},
       {status:"Deliver", updatedBy:updatedBy},
       {new:true}
     );
+    console.log("swapnil here")
     // const updatedTaskChange = await taskService.addTaskChange(
     //   taskId,
     //   status,
