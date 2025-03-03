@@ -7,12 +7,10 @@ import Hunter from "./assets/Componets/Hunter Dashboard/hunter";
 import Coach from "./assets/Componets/Coach Dashboard/coach";
 import Protected from "./App/Common/Auth/Protected";
 import AdminBoard from "./assets/Componets/Admin Dashboard/AdminDashboard";
-// import Leaderboard from './assets/Componets/Lederboard/lederboard';
-import Leaderboard from "./assets/Componets/Lederboard/Lederboard";
+
 import Tool from './assets/Componets/Tool/tool';
 import TaskDetails from "./assets/Componets/Task/task";
 import Task from './assets/Componets/Task/task';
-import { CoachView } from "./assets/Componets/Tool/coach-view";
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
@@ -34,11 +32,8 @@ function App() {
         {/* <Route path="/admin" element={userRole === "admin" ? <Admin /> : <Navigate to="/login" replace />} /> */}
         <Route path="/tool/:taskId" element={<Tool/>} />
         <Route path="/task/:taskId" element={<Task/>} />
-        <Route path="/tool-coach/:taskId" element={<CoachView userRole={"coach"}/>} />
-        <Route path="/tool-admin/:taskId" element={<CoachView userRole={"admin"}/>} />
-        <Route path="/task-details/:taskId" element={<TaskDetails />} />
-        <Route path="/Leaderboard" element={<Leaderboard />} />
         
+        <Route path="/task-details/:taskId" element={<TaskDetails />} />
         
 
       </Routes>

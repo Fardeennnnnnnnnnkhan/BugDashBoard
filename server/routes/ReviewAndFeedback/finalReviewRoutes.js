@@ -5,5 +5,5 @@ const finalReportController = require("../../controllers/ReviewAndFeedbackContro
 router.post("/createOrUpdate", finalReportController.createOrUpdateFinalReport);
 
 router.get("/:taskId", finalReportController.getFinalReportByTaskId);
-router.post("/finalreviewFeedback/:reviewId",finalReportController.reviewFeedback);
+
 module.exports = router;

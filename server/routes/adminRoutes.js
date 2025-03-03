@@ -14,5 +14,4 @@ router.post("/login",loginAdmin);
 // ✅ Create Admin (Restricted to Authenticated Admins)
 router.post("/create-admin", authenticate , createAdmin);
 
-
 module.exports = router;

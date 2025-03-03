@@ -1,5 +1,4 @@
 const Task = require("../../models/Task");
-const FinalReport = require("../../models/TaskReview/FinalReport");
 const finalReportService = require("../../Services/ReviewAndFeedbackServices/finalReviewServices");
 
 // Create or Update Final Report
@@ -13,15 +12,8 @@ exports.createOrUpdateFinalReport = async (req, res) => {
             { new: true, upsert: true } // Return updated doc, create if not found
           );
         const report = await finalReportService.createOrUpdateFinalReport(req.body);
-        const pushIntask = await Task.findByIdAndUpdate(
-            {_id:req.body.taskId}, 
-            { finalReview: report._id } , 
-            { new: true, upsert: true } // Return updated task, create if not found
-          );
-          
         res.status(200).json(report);
     } catch (error) {
-        console.log(error)
         res.status(500).json({ error: error.message });
     }
 };
@@ -38,20 +30,3 @@ exports.getFinalReportByTaskId = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-
-exports.reviewFeedback = async(req,res)=>{
-    try{
-        // console.log("swapnil is here")
-        // FinalReport
-        const feedback = await FinalReport.findOneAndUpdate(
-            {_id : req.params.reviewId},
-            {feedBack : req.body.feedBack},
-            { new :true},
-        )
-        res.status(200).json({message:"feedback send", feedback});
-    }
-    catch(error){
-        res.status(500).json({error:error.message});
-    }
-}

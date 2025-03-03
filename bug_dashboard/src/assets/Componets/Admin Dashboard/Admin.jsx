@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, Trophy } from "lucide-react";
+import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, HomeIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "./config";
-import AdminBoard from "./AdminDashboard";
 
 export default function Admin() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -18,10 +17,13 @@ export default function Admin() {
   const fetchPendingUsers = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/auth/pending-users`);
+      console.log("Fetched Users:", response.data); 
       setPendingUsers(Array.isArray(response.data) ? response.data : []);
+  
+      console.log("Updated State:", pendingUsers); 
     } catch (error) {
       console.error("Error fetching pending users", error);
-      setPendingUsers([]);
+      setPendingUsers([]); 
     }
   };
 
@@ -70,19 +72,9 @@ export default function Admin() {
       <nav className="bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Project Management Dashboard</h1>
         <div className="flex items-center space-x-4">
-          {/* Leaderboard Button with Gaming Feel */}
-          <Link 
-            to="/leaderboard" 
-            className="relative px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 group"
-          >
-            <span className="flex items-center">
-              <Trophy className="w-5 h-5 mr-2 animate-pulse text-yellow-300" />
-              Leaderboard
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-            </span>
-            <span className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-          </Link>
-          
+        <button onClick={() => { navigate("/admin-dashboard"); }} className="p-2 rounded-lg bg-yellow-500 text-white hover:bg-red-600">
+            <HomeIcon></HomeIcon>
+          </button>
           <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
             {isDarkMode ? <Sun className="w-5 h-5 text-gray-300" /> : <Moon className="w-5 h-5 text-gray-600" />}
           </button>
@@ -133,9 +125,8 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Projects Section */}
-        <AdminBoard/>
-        {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        {/* Projects Section
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
@@ -209,8 +200,8 @@ export default function Admin() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </div> */}
+          </div> */}
+        {/* </div> */}
       </main>
     </div>
   );

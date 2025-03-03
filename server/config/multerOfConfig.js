@@ -135,34 +135,4 @@ const getFileFromGridFS = async (req, res) => {
     }
   };
 
-
-
-  const mongoose = require("mongoose");
-
-const deleteFileFromGridFS = async (req, res) => {
-  try {
-    if (!req.params.id) {
-      return res.status(400).json({ error: "File ID is required" });
-    }
-
-    const fileId = new mongoose.Types.ObjectId(req.params.id); // Convert to ObjectId
-
-    if (!bucket) {
-      return res.status(500).json({ error: "GridFS Bucket not initialized" });
-    }
-
-    const file = await bucket.find({ _id: fileId }).toArray();
-    if (!file.length) {
-      return res.status(404).json({ error: "aleary deleted  " });
-    }
-
-    await bucket.delete(fileId);
-    res.status(200).json({ message: "File deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting file:", error);
-    res.status(500).json({ error: "Failed to delete file" });
-  }
-};
-
-
-module.exports = { upload, uploadToGridFS, getFileFromGridFS ,deleteFileFromGridFS};
+module.exports = { upload, uploadToGridFS, getFileFromGridFS };
