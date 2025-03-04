@@ -1,11 +1,13 @@
 import React, { useState ,useEffect} from 'react';
 import { CheckCircle2, RotateCcw, Eye, Send } from 'lucide-react';
 import { ReviewModal } from './ReviewModal';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from "axios";
 import { FeedReviewModal } from './FeedBackModal';
 
-export function CoachView({ userRole }) {
+export function CoachView({ userRole  }) {
+  const location = useLocation();
+  const projectTask = location.state||{};
     const [feedback, setFeedback] = useState("");
   const [tasks, setTasks] = useState([]);
     const [selectedReview, setSelectedReview] = useState(null);
@@ -15,7 +17,7 @@ export function CoachView({ userRole }) {
   useEffect(() => {
     const fetchCompletedTasks = async () => {
       try {
-        console.log(taskId)
+        console.log(projectTask)
         const response = await axios.get(`http://localhost:3000/api/task/statusFetch/${userRole === "coach" ? "Completed" : "Reviewed"}?taskId=${taskId}`);
         console.log(response.data.tasks);
         setTasks( response.data.tasks);
@@ -34,11 +36,14 @@ export function CoachView({ userRole }) {
    const onUpdateTaskStatus = async (taskId,status)=>{
 
     try{
-
+      // console.log(projectTask)
+      // alert(projectTask.taskId)
         const response = await axios.patch(`http://localhost:3000/api/task/update-status/${taskId}`,
             {
                 status:status,
-                updatedBy:localStorage.getItem('userName')
+                updatedBy:localStorage.getItem('userName'),
+                userEmail:projectTask.userEmail,
+                tks : projectTask.taskId
             }
         );
         console.log(taskId);
@@ -48,7 +53,7 @@ export function CoachView({ userRole }) {
         
     }
     catch{
-        alert("not able to change");
+        alert("not able to change ...");
     }
    }
 
@@ -70,8 +75,9 @@ export function CoachView({ userRole }) {
         setTasks((tasks) => tasks.filter((task) => task._id !== taskId));
         
     }
-    catch{
-        alert("not able to change");
+    catch(error){
+      console.log(error)
+        alert("not able to delevier",error);
     }
    }
 
@@ -115,7 +121,7 @@ export function CoachView({ userRole }) {
               {task.reviews.map((review,index) => (
                 <div key={review._id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
                   <div>
-                    <p className="font-medium">{index}</p>
+                    <p className="font-medium">review {index + 1}  </p>
                     {review.feedBack && (
                       <p className="text-sm text-gray-600 mt-1">Previous feedback: {task.finalReview.feedback}</p>
                     )}

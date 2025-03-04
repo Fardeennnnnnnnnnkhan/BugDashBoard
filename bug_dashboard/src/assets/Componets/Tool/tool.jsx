@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, Upload, Plus } from "lucide-react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const SecurityTestingDashboard = () => {
+  const location = useLocation();
+  const projectTask  = location.state || {};
   const [scriptName, setScriptName] = useState("");
   const [category, setCategory] = useState("");
   const [scriptCode, setScriptCode] = useState("");
@@ -17,10 +19,21 @@ const SecurityTestingDashboard = () => {
   const [supportingFiles, setSupportingFiles] = useState(null);
   const { taskId } = useParams(); // Extract taskId from URL
   const [reviewList, setReviewList] = useState([]);
+  const [dbScripts, setDbScripts] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [script, setScript] = useState({});
+  const [newScript, setNewScript] = useState({
+    name: "",
+    category: "",
+    code: "",
+  });
+
 
   useEffect(() => {
     const fetchTaskReview = async () => {
       try {
+        // alert()
         const response = await fetch(
           `http://localhost:3000/api/taskReview/allreview/${taskId}`
         );
@@ -42,11 +55,101 @@ const SecurityTestingDashboard = () => {
   // Role selection state
   const [selectedRole, setSelectedRole] = useState("hunter");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  // const role = localStorage.getItem('userRole')
   const roles = [
-    { id: "hunter", label: "View as Hunter" },
-    { id: "coach", label: "View as Coach" },
-    { id: "admin", label: "View as Admin" },
+
+    { id: "Hunter", label: `View as Hunter` },
+    // { id: "coach", label: "View as Coach" },
+    // { id: "admin", label: "View as Admin" },
   ];
+
+
+
+
+  const fetchScripts = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/scripts");
+      console.log("Fetched scripts:", response.data);
+      setDbScripts(response.data);
+    } catch (error) {
+      console.error("Error fetching scripts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchScripts();
+  }, []);
+
+
+  // const ResourceViewer = () => {
+  //   const [resources, setResources] = useState([]);
+
+  const [resources, setResources] = useState([]);
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const [texts, videos] = await Promise.all([
+          fetch("http://localhost:3000/api/texts").then((res) => res.json()).catch(() => []),
+          fetch("http://localhost:3000/api/videos").then((res) => res.json()).catch(() => []),
+        ]);
+
+        console.log("Fetched Texts:", texts);
+        console.log("Fetched Videos:", videos);
+        setResources([...texts, ...videos]);
+      } catch (err) {
+        console.error("Error fetching resources:", err);
+      }
+    };
+
+    fetchResources();
+  }, []);
+
+    // Filter the fetched scripts based on search term
+    const filteredScripts = dbScripts.filter((script) => {
+      const cat = script.category || "";
+      const act = script.activity || "";
+      return (
+        cat.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        act.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+
+    // Handle input changes for the new script form
+    const handleNewScriptInputChange = (e) => {
+      setNewScript({ ...newScript, [e.target.name]: e.target.value });
+    };
+
+    // Handle new script submission – note the keys we send!
+    const handleAddNewScript = async () => {
+      console.log("New script data:", newScript);
+      if (!newScript.name || !newScript.category || !newScript.code) {
+        alert("Please fill in all fields!");
+        return;
+      }
+      // Send keys that your backend expects
+      const scriptData = {
+        script_name: newScript.name, // maps to activity in the backend
+        category: newScript.category,
+        script_code: newScript.code, // maps to tools_technique in the backend
+      };
+
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/scripts/create",
+          scriptData,
+          { headers: { "Content-Type": "application/json" } }
+        );
+        console.log("New script added:", response.data);
+        alert("Script added successfully!");
+        setNewScript({ name: "", category: "", code: "" });
+        fetchScripts();
+      } catch (error) {
+        console.error("Error adding script:", error.response?.data || error.message);
+        alert("Failed to add script. Check the console for details.");
+      }
+    };
+
 
   const handleRoleChange = (role) => {
     setSelectedRole(role);
@@ -100,6 +203,7 @@ const SecurityTestingDashboard = () => {
           reportSummary: reportSummary,
           difficulty: difficultyRating,
           updatedBy: localStorage.getItem("userName"),
+          userEmail:localStorage.getItem("userEmail")
         },
         {
           headers: { "Content-Type": "application/json" }, // Use application/json
@@ -125,6 +229,7 @@ const SecurityTestingDashboard = () => {
     if(!supportingFiles){
       alert("please select supportingFiles");return ;
     }
+    formData.append("scriptId", script.scriptId);
     formData.append("scriptFile", file);
     formData.append("observedBehavior", observedBehavior);
     formData.append("vulnerabilities", vulnerabilities);
@@ -224,12 +329,12 @@ const SecurityTestingDashboard = () => {
     <div className="max-w-6xl mx-auto p-4">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <h1 className="text-xl font-semibold">Task ID: BH-001</h1>
+          <h1 className="text-xl font-semibold">Task ID: {projectTask.taskId}</h1>
           <a
             href="https://example.com/target-app"
             className="text-blue-500 hover:underline text-sm"
           >
-            https://example.com/target-app
+            {}
           </a>
         </div>
 
@@ -269,102 +374,113 @@ const SecurityTestingDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Column */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Help & Resources</h2>
-            <div className="space-y-4">
-              {/* Testing Scripts Dropdown */}
-              <div className="border rounded-lg">
-                <button
-                  className="w-full p-3 flex items-center justify-between hover:bg-gray-50"
-                  onClick={() => setIsTestingScriptsOpen(!isTestingScriptsOpen)}
-                >
-                  <span>Standard Testing Scripts</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transform transition-transform ${
-                      isTestingScriptsOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {isTestingScriptsOpen && (
-                  <div className="border-t p-3">
-                    {Object.entries(standardScripts).map(
-                      ([category, content]) => (
-                        <div key={category} className="mb-4">
-                          <h3 className="font-medium mb-2">{category}</h3>
-                          <div className="space-y-2 pl-4">
-                            {content.scripts.map((script) => (
-                              <button
-                                key={script}
-                                className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm"
-                                onClick={() =>
-                                  handleScriptSelect(category, script)
-                                }
-                              >
-                                {script}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
 
-              <div className="border rounded-lg p-3">
-                <h3 className="font-medium mb-2">Documentation & Tutorials</h3>
-                <ul className="space-y-2 text-blue-500">
-                  <li>
-                    <a href="#" className="hover:underline">
-                      Web Security Testing Guide
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:underline">
-                      API Security Testing Best Practices
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:underline">
-                      Common Vulnerability Guide
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Add New Script Form */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column: Help & Resources with New Script Form */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold mb-4">Help & Resources</h2>
               <div className="space-y-4">
-                <h3 className="font-medium">Add New Script</h3>
-                <input
-                  type="text"
-                  placeholder="Script Name"
-                  className="w-full p-2 border rounded"
-                  value={scriptName}
-                  onChange={(e) => setScriptName(e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Category"
-                  className="w-full p-2 border rounded"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-                <textarea
-                  placeholder="Script Code"
-                  className="w-full p-2 border rounded min-h-[100px]"
-                  value={scriptCode}
-                  onChange={(e) => setScriptCode(e.target.value)}
-                />
-                <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                  Add Script
-                </button>
+                {/* Testing Scripts Dropdown */}
+                <div className="border rounded-lg">
+                  <button
+                    className="w-full p-3 flex items-center justify-between hover:bg-gray-50"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <span>Standard Testing Scripts</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transform transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                        }`}
+                    />
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="border-t p-3">
+                      {/* Search Bar for Dropdown */}
+                      <input
+                        type="text"
+                        placeholder="Search scripts..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full p-2 border rounded mb-3"
+                      />
+                      {filteredScripts.length > 0 ? (
+                        filteredScripts.map((script) => (
+                          <div className="mb-1">
+                           <button onClick={()=>setScript(script)}>
+                            <div key={script._id} className="mb-2">
+                            <div className="font-bold">{script.category}</div>
+                            <div className="ml-2">{script.activity}</div>
+                          </div>
+                           </button></div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500">No scripts available</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 max-w-3xl mx-auto">
+  <h1 className="text-xl font-semibold mb-2">📚 Documentation & Tutorials</h1>
+  {resources.length === 0 ? (
+    <p className="text-gray-500 text-sm">Loading resources...</p>
+  ) : (
+    <div className="grid gap-3">
+      {resources.map((resource) => (
+        <div key={resource._id} className="p-3 shadow-sm border border-gray-300 rounded-md bg-white">
+          <a
+            href={resource.content}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-base font-medium text-blue-600 hover:underline"
+          >
+            {resource.title}
+          </a>
+          <p className="text-xs text-gray-600">{resource.description}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>  
+
+
+
+                {/* Add New Script Form */}
+                <div className="space-y-4">
+                  <h3 className="font-medium">Add New Script</h3>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Script Name"
+                    className="w-full p-2 border rounded"
+                    value={newScript.name}
+                    onChange={handleNewScriptInputChange}
+                  />
+                  <input
+                    type="text"
+                    name="category"
+                    placeholder="Category"
+                    className="w-full p-2 border rounded"
+                    value={newScript.category}
+                    onChange={handleNewScriptInputChange}
+                  />
+                  <textarea
+                    name="code"
+                    placeholder="Script Code"
+                    className="w-full p-2 border rounded min-h-[100px]"
+                    value={newScript.code}
+                    onChange={handleNewScriptInputChange}
+                  />
+                  <button
+                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                    onClick={handleAddNewScript}
+                  >
+                    Add Script
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* Right Column */}
         <div className="space-y-6">
@@ -376,7 +492,7 @@ const SecurityTestingDashboard = () => {
                 <input
                   type="text"
                   className="w-full p-2 border rounded"
-                  value={selectedScript?.name || ""}
+                  value={script.category || ""}
                   readOnly
                 />
               </div>
@@ -465,13 +581,21 @@ const SecurityTestingDashboard = () => {
                   />
                 </div>
               </div> */}
+              {/* <button
+              onClick={(e) => handleSubmit(e)} // Pass event
+  disabled={projectTask.status !== "In Progress"}
+  className={`px-4 py-2 rounded-md 
+    ${projectTask.status === "In Progress" ? "bg-green-600  text-white hover:bg-blue-700" : "w-full bg-gray-400 text-gray-600 cursor-not-allowed relative"}`}
+>
+  Submit
+</button> */}
 
-              <button
-                className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                onClick={(e) => handleSubmit(e)} // Pass event
-              >
-                Submit Review
-              </button>
+               <button
+                 className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                 onClick={(e) => handleSubmit(e)} // Pass event
+               >
+                 Submit Review 
+               </button>
             </div>
           </div>
 

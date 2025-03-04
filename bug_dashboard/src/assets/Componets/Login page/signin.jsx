@@ -38,6 +38,7 @@ const Signin = ({ setUserRole }) => {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userRole", response.data.user.role);
       localStorage.setItem("userName", response.data.user.username);
+      localStorage.setItem("userEmail", response.data.user.email);
       setUserRole(role);
       console.log(response.data.user.role)
       if (response.data.user.role === "hunter") {

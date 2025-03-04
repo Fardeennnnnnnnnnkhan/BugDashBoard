@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Search, Edit, Eye, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Moon, Sun, Search, Edit, Eye, LogOut ,Trophy} from "lucide-react";
+import { useNavigate ,Link} from "react-router-dom";
 import Navbar from "../Appbar/NavBar";
 
 export default function TaskDisplayView({ title, role }) {
@@ -18,10 +18,10 @@ export default function TaskDisplayView({ title, role }) {
     navigate("/login");
   };
 
-  const handleToolClick = (taskId) => {
-    if(role == "coach")navigate(`/tool-coach/${taskId}`)
-      else if(role == "admin"){navigate(`/tool-admin/${taskId}`)}
-    else{ navigate(`/tool/${taskId}`);}
+  const handleToolClick = (taskId,projectTask) => {
+    if(role == "coach"){navigate(`/tool-coach/${taskId}`,{state:projectTask})}
+      else if(role == "admin"){navigate(`/tool-admin/${taskId}`,{state:projectTask})}
+    else{ navigate(`/tool/${taskId}`,{state:projectTask} )}
   };
   const [project, setProject] = useState([]);
   const Status = ["Unclaimed", "In Process", "Complete", "Reviewed"];
@@ -157,7 +157,22 @@ export default function TaskDisplayView({ title, role }) {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           {title}
         </h1>
+
+        
+
+
         <div className="flex items-center space-x-4">
+        <Link
+            to="/leaderboard"
+            className="relative px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 group"
+          >
+            <span className="flex items-center">
+              <Trophy className="w-5 h-5 mr-2 animate-pulse text-yellow-300" />
+              Leaderboard
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            </span>
+            <span className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+          </Link>
           <button
             onClick={toggleDarkMode}
             className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700"
@@ -274,7 +289,7 @@ export default function TaskDisplayView({ title, role }) {
                     <td className="px-6 py-4 text-sm">{project.industry}</td>
                     <td className="px-6 py-4 text-sm">
                       <button
-                        onClick={() => handleToolClick(project._id)}
+                        onClick={() => handleToolClick(project._id,project)}
                         className="text-blue-500 hover:underline cursor-pointer"
                       >
                         View Link

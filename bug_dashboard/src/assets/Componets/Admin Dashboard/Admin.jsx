@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, Trophy } from "lucide-react";
+import { Moon, Sun, Search, Edit, Eye, LogOut, Check, X, Trophy, Home } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "./config";
@@ -71,6 +71,9 @@ export default function Admin() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Project Management Dashboard</h1>
         <div className="flex items-center space-x-4">
           {/* Leaderboard Button with Gaming Feel */}
+          <button onClick={()=>{navigate('/admin-dashboard')}}>
+              <Home />
+          </button>
           <Link 
             to="/leaderboard" 
             className="relative px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 group"
@@ -134,7 +137,7 @@ export default function Admin() {
         </div>
 
         {/* Projects Section */}
-        <AdminBoard/>
+        
         {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />

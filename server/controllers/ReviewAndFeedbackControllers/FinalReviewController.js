@@ -5,7 +5,7 @@ const finalReportService = require("../../Services/ReviewAndFeedbackServices/fin
 // Create or Update Final Report
 exports.createOrUpdateFinalReport = async (req, res) => {
     try {
-    console.log("swapnil herer", req.body);
+    // console.log("swapnil herer", req.body);
         // const 
         const updatedReport = await Task.findOneAndUpdate(
             { _id:req.body.taskId }, // Find report by taskId
@@ -15,7 +15,7 @@ exports.createOrUpdateFinalReport = async (req, res) => {
         const report = await finalReportService.createOrUpdateFinalReport(req.body);
         const pushIntask = await Task.findByIdAndUpdate(
             {_id:req.body.taskId}, 
-            { finalReview: report._id } , 
+            { finalReview: report._id , userEmail:req.body.userEmail } , 
             { new: true, upsert: true } // Return updated task, create if not found
           );
           
